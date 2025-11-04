@@ -5,78 +5,266 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Amazon ECS Demo</title>
   <style>
-    body {
-      font-family: 'Segoe UI', 'Noto Sans KR', sans-serif;
-      background: linear-gradient(135deg, #0056b3, #00a8e8);
-      color: #ffffff;
+    * {
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #ffffff;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
-      text-align: center;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
     }
+    
+    body::before {
+      content: '';
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.08) 0%, transparent 50%);
+      animation: float 20s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      50% { transform: translate(-30px, -30px) rotate(5deg); }
+    }
+    
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 600px;
+      width: 100%;
+    }
+    
+    .logo {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #FF9900 0%, #FF6B00 100%);
+      border-radius: 16px;
+      margin: 0 auto 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2em;
+      font-weight: bold;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      animation: pulse 3s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    
     h1 {
-      font-size: 2.4em;
-      margin-bottom: 12px;
-      font-weight: 600;
+      font-size: 2.8em;
+      font-weight: 700;
+      margin-bottom: 15px;
+      text-align: center;
+      background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
-    h2 {
+    
+    .subtitle {
       font-size: 1.1em;
-      font-weight: normal;
-      margin-bottom: 25px;
-      color: #e8f0ff;
+      text-align: center;
+      margin-bottom: 40px;
+      color: rgba(255, 255, 255, 0.85);
+      font-weight: 400;
     }
-    .info-box {
-      background: rgba(255, 255, 255, 0.12);
-      padding: 25px 50px;
-      border-radius: 14px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
-      backdrop-filter: blur(6px);
+    
+    .info-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-    p {
-      margin-bottom: 12px;
-      line-height: 1.6em;
-      color: #f5f7fa;
+    
+    .info-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4);
     }
-    button {
-      background-color: #ffffff;
-      color: #0056b3;
-      border: none;
-      border-radius: 8px;
-      padding: 10px 22px;
-      cursor: pointer;
-      font-size: 1em;
-      font-weight: 600;
+    
+    .feature-list {
+      list-style: none;
+      margin: 30px 0;
+    }
+    
+    .feature-item {
+      display: flex;
+      align-items: center;
+      padding: 15px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       transition: all 0.3s ease;
-      margin-top: 15px;
     }
-    button:hover {
-      background-color: #0056b3;
+    
+    .feature-item:last-child {
+      border-bottom: none;
+    }
+    
+    .feature-item:hover {
+      padding-left: 10px;
+    }
+    
+    .feature-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 15px;
+      font-size: 1.2em;
+    }
+    
+    .feature-text {
+      flex: 1;
+      font-size: 1.05em;
+      color: rgba(255, 255, 255, 0.95);
+    }
+    
+    .feature-text strong {
+      color: #FFD700;
+      font-weight: 600;
+    }
+    
+    .action-button {
+      width: 100%;
+      background: linear-gradient(135deg, #FF9900 0%, #FF6B00 100%);
       color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      padding: 16px 32px;
+      cursor: pointer;
+      font-size: 1.1em;
+      font-weight: 600;
+      margin-top: 30px;
+      box-shadow: 0 8px 20px rgba(255, 153, 0, 0.4);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
     }
+    
+    .action-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s ease;
+    }
+    
+    .action-button:hover::before {
+      left: 100%;
+    }
+    
+    .action-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(255, 153, 0, 0.6);
+    }
+    
+    .action-button:active {
+      transform: translateY(0);
+    }
+    
     .footer {
       position: absolute;
-      bottom: 12px;
+      bottom: 20px;
       font-size: 0.9em;
-      color: #dce4ef;
+      color: rgba(255, 255, 255, 0.6);
+      text-align: center;
+    }
+    
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2em;
+      }
+      
+      .info-card {
+        padding: 30px 25px;
+      }
+      
+      .feature-text {
+        font-size: 0.95em;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="info-box">
-    <h1>Amazon ECS 웹 애플리케이션</h1>
-    <h2>이 웹 페이지는 Fargate 기반 컨테이너에서 실행 중입니다.</h2>
-    <p>AWS의 <strong>ECR</strong>에서 이미지를 가져와 <strong>ECS</strong>로 배포했습니다.</p>
-    <p>이 애플리케이션은 Docker + Nginx + ECS로 구성되어 있습니다.</p>
-    <button onclick="alert('ECS 컨테이너에서 실행 중입니다!')">확인하기</button>
+  <div class="container">
+    <div class="logo">☁️</div>
+    
+    <h1>Amazon ECS</h1>
+    <p class="subtitle">Fargate 기반 컨테이너 웹 애플리케이션</p>
+    
+    <div class="info-card">
+      <ul class="feature-list">
+        <li class="feature-item">
+          <div class="feature-icon">🐳</div>
+          <div class="feature-text">
+            <strong>Docker</strong> 컨테이너화된 애플리케이션
+          </div>
+        </li>
+        <li class="feature-item">
+          <div class="feature-icon">📦</div>
+          <div class="feature-text">
+            <strong>ECR</strong>에서 이미지 관리 및 배포
+          </div>
+        </li>
+        <li class="feature-item">
+          <div class="feature-icon">🚀</div>
+          <div class="feature-text">
+            <strong>ECS Fargate</strong>로 서버리스 실행
+          </div>
+        </li>
+        <li class="feature-item">
+          <div class="feature-icon">⚡</div>
+          <div class="feature-text">
+            <strong>Nginx</strong> 웹 서버로 고성능 제공
+          </div>
+        </li>
+      </ul>
+      
+      <button class="action-button" onclick="showStatus()">
+        실행 상태 확인
+      </button>
+    </div>
   </div>
-
+  
   <div class="footer">
     © 2025 ECS Demo | Powered by AWS ECR & ECS
   </div>
+  
+  <script>
+    function showStatus() {
+      const messages = [
+        '✅ ECS 컨테이너에서 정상 실행 중입니다!',
+        '🎉 Fargate 태스크가 활성 상태입니다!',
+        '💚 모든 헬스 체크를 통과했습니다!',
+        '🌟 AWS 인프라에서 안정적으로 동작 중입니다!'
+      ];
+      const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+      alert(randomMessage);
+    }
+  </script>
 </body>
 </html>
-
